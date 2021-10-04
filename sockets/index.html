@@ -12,11 +12,44 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
-      socket.on('conectado', function (msg) {
-        console.log(msg);
+      var nome = prompt('Qual seu nome?');
+      socket.emit('new user', nome);
+      socket.on('new user', function (data) {
+        if (data.success) {
+          alert('Bem-vindo ao Danki Chat ' + nome);
+        } else {
+          alert('Já existe usuário com este nome....');
+          window.location.href = '/';
+        }
       });
-      socket.on('novo usuario', function (msg) {
-        console.log(msg);
+
+      var messages = document.getElementById('messages');
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', { msg: input.value, nome: nome });
+          input.value = '';
+        }
+      });
+
+      socket.on('chat message', function (obj) {
+        if (obj.nome == nome) {
+          //coloco a mensagem com uma cor.
+          var item = document.createElement('li');
+          item.style.backgroundColor = 'gray';
+          item.textContent = obj.nome + ' disse: ' + obj.msg;
+          messages.appendChild(item);
+          window.scrollTo(0, document.body.scrollHeight);
+        } else {
+          //coloco com outra.
+          var item = document.createElement('li');
+          item.textContent = obj.nome + ' disse: ' + obj.msg;
+          messages.appendChild(item);
+          window.scrollTo(0, document.body.scrollHeight);
+        }
       });
     </script>
   </body>

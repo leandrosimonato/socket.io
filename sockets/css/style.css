@@ -43,6 +43,6 @@ body {
 #messages > li {
   padding: 0.5rem 1rem;
 }
-#messages > li:nth-child(odd) {
-  background: #efefef;
+#messages > li {
+  background-color: white;
 }
